@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iOS App Store Launch Plan — LocalCheck & Hingesight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2234;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f4ff;
+    --muted: #8b9dbf;
+    --accent: #4f7ef7;
+    --accent2: #6ee7b7;
+    --gold: #f59e0b;
+    --red: #ef4444;
+    --orange: #f97316;
+    --purple: #a78bfa;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,14,23,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(16px,4vw,48px);
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .logo span { color: var(--accent); }
+  .header-badge {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    background: rgba(79,126,247,0.12); border: 1px solid rgba(79,126,247,0.3);
+    color: var(--accent); padding: 4px 10px; border-radius: 4px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: clamp(100px,14vw,160px) clamp(16px,4vw,80px) clamp(60px,8vw,100px);
+    max-width: 1200px; margin: 0 auto;
+  }
+  .hero-kicker {
+    font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .14em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-kicker::before { content:''; width:24px; height:1px; background:var(--accent); }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 900; letter-spacing: -0.03em; line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .hero h1 .hl { color: var(--accent); }
+  .hero-sub {
+    font-size: clamp(15px, 2vw, 18px); color: var(--muted); max-width: 620px;
+    margin-bottom: 40px; font-weight: 400;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  .repo-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 14px;
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+    text-decoration: none; transition: border-color .2s;
+  }
+  .repo-chip:hover { border-color: var(--accent); }
+  .repo-chip svg { width:14px; height:14px; color:var(--muted); }
+
+  /* ── STATUS LEGEND ── */
+  .legend {
+    padding: 0 clamp(16px,4vw,80px) 48px;
+    max-width: 1200px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  }
+  .legend-label { font-size: 12px; color: var(--muted); margin-right: 8px; font-family: var(--mono); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    font-family: var(--mono); letter-spacing: .04em; text-transform: uppercase;
+  }
+  .badge-human { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+  .badge-agent { background: rgba(110,231,183,0.12); border: 1px solid rgba(110,231,183,0.3); color: var(--accent2); }
+  .badge-shared { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
+  .badge-done { background: rgba(79,126,247,0.12); border: 1px solid rgba(79,126,247,0.3); color: var(--accent); }
+  .badge-revenue { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: var(--gold); }
+  .dot { width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+
+  /* ── STAT BAR ── */
+  .stat-bar {
+    padding: 0 clamp(16px,4vw,80px) 64px;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden;
+  }
+  .stat {
+    background: var(--surface);
+    padding: 24px 28px;
+  }
+  .stat-num {
+    font-size: clamp(28px,4vw,40px); font-weight: 900; letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: var(--mono); }
+
+  /* ── PHASE CARDS ── */
+  .phases {
+    padding: 0 clamp(16px,4vw,80px) 120px;
+    max-width: 1200px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .phase:hover { border-color: rgba(79,126,247,0.3); }
+  .phase-header {
+    display: flex; align-items: flex-start; gap: 20px;
+    padding: 28px 32px; cursor: pointer;
+    justify-content: space-between;
+  }
+  .phase-left { display: flex; align-items: flex-start; gap: 20px; flex: 1; }
+  .phase-num {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--muted); background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 6px 10px; white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  }
+  .phase-title-block { flex: 1; }
+  .phase-title {
+    font-size: clamp(16px,2vw,20px); font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .phase-desc { font-size: 14px; color: var(--muted); }
+  .phase-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .phase-body {
+    padding: 0 32px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── TASK LIST ── */
+  .task-group { margin-top: 24px; }
+  .task-group-label {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--muted); letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .task-group-label::after { content:''; flex: 1; height: 1px; background: var(--border); }
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+  .task {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+  }
+  .task-check {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .task-text { font-size: 14px; line-height: 1.5; flex: 1; }
+  .task-text strong { color: var(--text); font-weight: 600; }
+  .task-text code {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    background: rgba(79,126,247,0.1); color: var(--accent);
+    padding: 1px 6px; border-radius: 3px;
+  }
+  .task-owner { flex-shrink: 0; }
+
+  .dod-block {
+    margin-top: 20px; padding: 16px 20px;
+    background: rgba(79,126,247,0.05); border: 1px solid rgba(79,126,247,0.2);
+    border-radius: 8px;
+  }
+  .dod-title {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px;
+  }
+  .dod-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .dod-list li {
+    font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px;
+  }
+  .dod-list li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  .warn-block {
+    margin-top: 16px; padding: 14px 18px;
+    background: rgba(239,68,68,0.05); border-left: 3px solid var(--red);
+    border-radius: 0 8px 8px 0;
+  }
+  .warn-block p { font-size: 13px; color: #fca5a5; }
+  .warn-block strong { color: var(--red); }
+
+  .info-block {
+    margin-top: 16px; padding: 14px 18px;
+    background: rgba(245,158,11,0.05); border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+  }
+  .info-block p { font-size: 13px; color: #fde68a; }
+
+  /* ── REVENUE SECTION ── */
+  .revenue-section {
+    padding: 0 clamp(16px,4vw,80px) 80px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-kicker {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .14em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-kicker::before { content:''; width:24px; height:1px; background:var(--gold); }
+  .section-title { font-size: clamp(22px,3vw,32px); font-weight: 800; letter-spacing: -0.03em; }
+  .rev-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+    gap: 16px;
+  }
+  .rev-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px; position: relative; overflow: hidden;
+  }
+  .rev-card.recommended { border-color: var(--gold); }
+  .rev-card.recommended::before {
+    content: 'RECOMMENDED';
+    position: absolute; top: 14px; right: 14px;
+    font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .1em;
+    background: var(--gold); color: #000; padding: 3px 8px; border-radius: 3px;
+  }
+  .rev-app { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .08em; }
+  .rev-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .rev-price { font-size: clamp(28px,3vw,36px); font-weight: 900; letter-spacing: -0.04em; color: var(--gold); }
+  .rev-price span { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .rev-features { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .rev-features li { font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; }
+  .rev-features li::before { content: '+'; color: var(--accent2); font-weight: 700; }
+
+  /* ── AGENT MANIFEST ── */
+  .agents-section {
+    padding: 0 clamp(16px,4vw,80px) 80px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .agent-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .agent-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .agent-name { font-weight: 700; margin-bottom: 6px; font-size: 15px; }
+  .agent-role { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 10px; }
+  .agent-tasks { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px clamp(16px,4vw,80px);
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  footer p { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    .phase-header { flex-direction: column; gap: 12px; }
+    .phase-body { padding: 0 16px 20px; }
+    .phase-header { padding: 20px 16px; }
+    .stat-bar { grid-template-columns: repeat(2,1fr); }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">jGPT-Automated / <span>GenJess_OS</span></div>
+  <div class="header-badge">iOS LAUNCH PLAN v1.0 · 2026-05-26</div>
+</header>
+
+<section class="hero">
+  <div class="hero-kicker">Initiative — App Store Launch</div>
+  <h1>From Repo to <span class="hl">App Store</span><br>Zero Gaps.</h1>
+  <p class="hero-sub">8 phases. Clear definition of done at each step. Agent-owned wherever possible. Revenue model locked at Phase 3 before a line of IAP code is written.</p>
+  <div class="hero-meta">
+    <a href="https://github.com/agenticjess-star/LocalCheckLive" target="_blank" class="repo-chip">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      LocalCheckLive
+    </a>
+    <a href="https://github.com/agenticjess-star/DatingData" target="_blank" class="repo-chip">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      DatingData (Hingesight)
+    </a>
+  </div>
+</section>
+
+<div class="legend" style="max-width:1200px;margin:0 auto;padding-left:clamp(16px,4vw,80px);padding-right:clamp(16px,4vw,80px);padding-bottom:40px;">
+  <span class="legend-label">Owner:</span>
+  <span class="badge badge-human"><span class="dot"></span>Human Gate</span>
+  <span class="badge badge-agent"><span class="dot"></span>Agent-Owned</span>
+  <span class="badge badge-shared"><span class="dot"></span>Shared</span>
+</div>
+
+<div class="stat-bar" style="max-width:1160px;margin:0 auto 64px;margin-left:clamp(16px,4vw,80px);margin-right:clamp(16px,4vw,80px);">
+  <div class="stat">
+    <div class="stat-num" style="color:var(--accent)">8</div>
+    <div class="stat-label">Phases</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:var(--accent2)">2</div>
+    <div class="stat-label">Apps</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:var(--gold)">$99</div>
+    <div class="stat-label">Apple Dev / yr</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:var(--orange)">~8wk</div>
+    <div class="stat-label">Launch Timeline</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:var(--purple)">~70%</div>
+    <div class="stat-label">Agent-Owned Tasks</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:var(--accent2)">30%</div>
+    <div class="stat-label">Apple's Cut</div>
+  </div>
+</div>
+
+<div class="phases">
+
+  <!-- P0 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P0</div>
+        <div class="phase-title-block">
+          <div class="phase-title">Foundation — Apple Account Setup</div>
+          <div class="phase-desc">Nothing else starts until this is done. No CI/CD, no TestFlight, no IAP without it.</div>
+          <div class="phase-tags">
+            <span class="badge badge-human"><span class="dot"></span>Human Gate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="task-group">
+        <div class="task-group-label">Required Actions</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Enroll in Apple Developer Program</strong> — $99/yr at developer.apple.com/enroll. Individual fastest (~24–48h). Org account requires D-U-N-S number (7–14 extra days via Dun &amp; Bradstreet).</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Sign Paid Applications Agreement</strong> in App Store Connect under Agreements. Without this, IAP products cannot be created.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Complete Tax Interview + Banking</strong> in App Store Connect. US tax forms and valid banking info required before first payout is released.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Create 2 Sandbox Tester Accounts</strong> in App Store Connect → Sandbox Testers. Use throwaway Apple IDs — these are used to test IAP without real charges.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Generate App-Specific Password</strong> at appleid.apple.com — store as <code>EXPO_APPLE_APP_SPECIFIC_PASSWORD</code> GitHub secret for EAS Submit automation.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done</div>
+        <ul class="dod-list">
+          <li>developer.apple.com shows "Account: Active"</li>
+          <li>App Store Connect shows Paid Applications Agreement = Active</li>
+          <li>Tax interview status = Submitted</li>
+          <li>2 sandbox testers visible in App Store Connect</li>
+          <li>App-specific password generated and stored</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P1 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P1</div>
+        <div class="phase-title-block">
+          <div class="phase-title">Repo Consolidation</div>
+          <div class="phase-desc">One canonical repo per app. Eliminate dead branches and dual-head risk before more code is written.</div>
+          <div class="phase-tags">
+            <span class="badge badge-agent"><span class="dot"></span>Agent-Owned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="warn-block">
+        <p><strong>Risk:</strong> agenticjess-star/DatingData and jGPT-Automated/DatingData are both active with commits 24 hours apart (05-24 vs 05-25). Code written in either without merging first = diverged history. Consolidate before any feature work.</p>
+      </div>
+      <div class="task-group">
+        <div class="task-group-label">LocalCheck Consolidation</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Canonical repo locked: <code>agenticjess-star/LocalCheckLive</code> (Expo, last pushed 2026-05-26). This is the build target.</div>
+            <div class="task-owner"><span class="badge badge-done"><span class="dot"></span>Done</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Archive <code>LocalCheck-IOS</code> (Swift native — 2 months stale, dead branch). GitHub Settings → Archive repository.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Archive any <code>LocalCheckExpo</code> empty shell repos. Verify via <code>git log --oneline -5</code> before archiving.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Fork <code>agenticjess-star/LocalCheckLive</code> → <code>jGPT-Automated/LocalCheckLive</code> for agent-side development. (In progress this turn.)</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="task-group">
+        <div class="task-group-label">DatingData / Hingesight Consolidation</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Diff <code>agenticjess-star/DatingData</code> vs <code>jGPT-Automated/DatingData</code>. Run: <code>git diff origin/main agenticjess-star/main --stat</code>. Merge the richer branch into canonical.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Lock canonical: <code>jGPT-Automated/DatingData</code> (already forked here). Archive the agenticjess-star version after merge confirmation.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Check for Flutter cousins (stale) — archive all non-Expo/non-TS DatingData variants.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done</div>
+        <ul class="dod-list">
+          <li>1 active LocalCheck repo, 1 active DatingData repo — all others archived</li>
+          <li>Both canonical repos have CI green on main</li>
+          <li>README updated with "canonical" label and links to jGPT mirrors</li>
+          <li>No duplicate active branches with diverged commits</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P2</div>
+        <div class="phase-title-block">
+          <div class="phase-title">Feature Completion</div>
+          <div class="phase-desc">Everything required to pass App Store Review. Missing any of these = rejection on first submit.</div>
+          <div class="phase-tags">
+            <span class="badge badge-shared"><span class="dot"></span>Shared</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="warn-block">
+        <p><strong>Guideline 5.1.1v — Hard Reject:</strong> Apps that collect user data MUST provide in-app account deletion. Apple will reject without it, no exceptions since June 2022.</p>
+      </div>
+      <div class="task-group">
+        <div class="task-group-label">Both Apps (Non-Negotiable for Review)</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>In-app account deletion flow</strong> — Settings → Delete Account → confirmation modal → API call to delete user + all associated data. Must be in the app UI, not just a web form. (Guideline 5.1.1v)</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Hosted Privacy Policy URL</strong> — must be a live HTTPS URL entered in App Store Connect. Use a simple hosted page (GitHub Pages or Vercel). Must describe data collected, retention, deletion process.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>App icon 1024×1024px</strong> — PNG, no alpha channel, no rounded corners (Apple adds them). Must be in <code>./assets/icon.png</code> for Expo.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>AI disclosure modal</strong> (enforced since Nov 2025) — any app using LLM/AI features must show a first-launch disclosure that content may be AI-generated.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="task-group">
+        <div class="task-group-label">LocalCheck-Specific</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Deploy PostgreSQL backend</strong> — schema is ready, not deployed. Use Supabase (free tier: 500MB) or Neon (free tier: 3GB). Set <code>DATABASE_URL</code> in production env.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Auth implementation</strong> — add Clerk or Supabase Auth. Required for account deletion flow and ELO persistence across devices.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Location + push notification permissions</strong> — add <code>expo-location</code> and <code>expo-notifications</code> with proper permission request UI. NSLocationWhenInUseUsageDescription required in app.json.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>iOS 26 NativeTabs compatibility</strong> — add fallback for iOS 15–25. Use <code>expo-router</code> with conditional import: <code>import { Tabs } from 'expo-router'</code> on iOS 15–25, NativeTabs on iOS 26+.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="task-group">
+        <div class="task-group-label">Hingesight-Specific</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>iOS wrapper choice:</strong> Option A = Expo WebView wrapper (~3 days to TestFlight, fastest path). Option B = Native Expo port (~3–4 weeks, better UX). Recommendation: ship Option A first, port after revenue validates.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Decision</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Replace Stripe IAP with StoreKit 2 / RevenueCat</strong> — Stripe cannot be used for in-app digital purchases on iOS (App Store guideline 3.1.1). RevenueCat SDK: <code>react-native-purchases</code>. Keep Stripe for the web version only.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Swap web file input for <code>expo-document-picker</code></strong> — native file upload for the CSV/data import flow. Web <code>&lt;input type="file"&gt;</code> doesn't work in Expo native builds.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done</div>
+        <ul class="dod-list">
+          <li>Account deletion flow implemented and testable in simulator</li>
+          <li>Privacy policy live at a public HTTPS URL</li>
+          <li>App icon 1024×1024 present in repo</li>
+          <li>AI disclosure modal appears on first launch</li>
+          <li>LocalCheck: backend deployed, auth working, location permissions handled</li>
+          <li>Hingesight: RevenueCat integrated, file picker swapped, iOS wrapper chosen</li>
+          <li>No P0 bugs in local Expo Go testing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P3</div>
+        <div class="phase-title-block">
+          <div class="phase-title">Revenue Architecture</div>
+          <div class="phase-desc">Design monetization before writing IAP code. RevenueCat is the layer — it handles entitlements, receipt validation, and analytics across iOS/Android.</div>
+          <div class="phase-tags">
+            <span class="badge badge-shared"><span class="dot"></span>Shared</span>
+            <span class="badge badge-revenue"><span class="dot"></span>Revenue</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="info-block">
+        <p><strong>Apple's 30% rule:</strong> All in-app digital purchases on iOS must go through StoreKit. RevenueCat sits on top of StoreKit and gives you a single SDK, cross-platform entitlement sync, and dashboard analytics. Free up to $2.5K MRR.</p>
+      </div>
+      <div class="task-group">
+        <div class="task-group-label">Setup</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Create RevenueCat project at app.revenuecat.com. Add both apps. Free tier covers up to $2.5K MRR — upgrade to Starter ($99/mo) when you cross $2.5K.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Create IAP products in App Store Connect first (status must be "Ready to Submit" before you can test). Then sync product IDs to RevenueCat dashboard.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Install SDK: <code>npx expo install react-native-purchases</code>. Configure with <code>Purchases.configure({apiKey: REVENUECAT_API_KEY})</code> at app root.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P4 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P4</div>
+        <div class="phase-title-block">
+          <div class="phase-title">EAS Build + CI/CD Pipeline</div>
+          <div class="phase-desc">After first manual setup, agents own the build pipeline completely. Push to main → TestFlight. Zero manual steps.</div>
+          <div class="phase-tags">
+            <span class="badge badge-agent"><span class="dot"></span>Agent-Owned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="task-group">
+        <div class="task-group-label">One-Time Setup (Human + Agent)</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Install EAS CLI: <code>npm install -g eas-cli</code>. Login: <code>eas login</code>. Initialize: <code>eas build:configure</code> — generates <code>eas.json</code>.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Configure <code>eas.json</code> with <code>production</code> (App Store distribution) and <code>preview</code> (simulator) profiles. Set <code>autoIncrement: true</code> for build numbers.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Add GitHub secrets: <code>EXPO_TOKEN</code> (from expo.dev account) + <code>EXPO_APPLE_APP_SPECIFIC_PASSWORD</code>. These are injected into CI — never commit to repo.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="task-group">
+        <div class="task-group-label">GitHub Actions Workflow (Agent-Owned)</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Create <code>.github/workflows/eas-build-submit.yml</code>: trigger on push to main, runs <code>eas build --platform ios --non-interactive</code> then <code>eas submit --platform ios --non-interactive</code>. Auto-uploads to TestFlight.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text">Pin GitHub Actions runner to <code>macos-15</code> — <code>macos-26</code> broke <code>fastlane match</code> in April 2026. Example: <code>runs-on: macos-15</code>.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done</div>
+        <ul class="dod-list">
+          <li>Merge to main → GitHub Action triggers automatically</li>
+          <li>EAS build completes without manual intervention</li>
+          <li>Build appears in App Store Connect → TestFlight within ~20–30 minutes of merge</li>
+          <li>Build number auto-increments on every push</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P5 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P5</div>
+        <div class="phase-title-block">
+          <div class="phase-title">TestFlight Beta</div>
+          <div class="phase-desc">Internal first (instant), external after Apple review (~24–48h). Run for 1 week minimum with real testers before App Store submission.</div>
+          <div class="phase-tags">
+            <span class="badge badge-shared"><span class="dot"></span>Shared</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="task-group">
+        <div class="task-group-label">Beta Testing Protocol</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Internal TestFlight</strong> — add up to 100 testers by Apple ID email, no Apple review required. Invite yourself + team immediately after first EAS build lands.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>External TestFlight</strong> — submit beta for Apple review (~24–48h). Create a public link for up to 10,000 external testers. Post in relevant Discord/Reddit communities.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Test IAP with sandbox accounts</strong> — use the 2 sandbox testers created in P0. Verify subscription purchase, restore purchase, and cancellation all work correctly via RevenueCat dashboard.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done</div>
+        <ul class="dod-list">
+          <li>At least 15 external testers have installed and used the app</li>
+          <li>IAP purchase + restore verified with sandbox testers</li>
+          <li>Zero P0 (crash on launch, payment failure) bugs in reports</li>
+          <li>Account deletion flow tested end-to-end</li>
+          <li>1 week minimum beta period completed</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P6 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P6</div>
+        <div class="phase-title-block">
+          <div class="phase-title">App Store Submission</div>
+          <div class="phase-desc">First submission typically takes 1–3 days for review. Have demo account credentials ready — reviewers will test the app themselves.</div>
+          <div class="phase-tags">
+            <span class="badge badge-shared"><span class="dot"></span>Shared</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="task-group">
+        <div class="task-group-label">Pre-Submission Checklist</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>App Store screenshots</strong> — required: iPhone 6.9" (1320×2868px). Optional but recommended: iPhone 6.5", iPad 12.9". Fastlane Snapshot can automate this: <code>fastlane snapshot</code>.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>App Privacy nutrition label</strong> — declare all data types collected (email, usage data, etc.) in App Store Connect → App Privacy. This is public-facing.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Demo account credentials</strong> — add a working login (email + password) in the Review Notes field. If reviewer can't log in, you get an immediate reject.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>IAP products status = "Ready to Submit"</strong> in App Store Connect before clicking Submit. Products in any other status will block submission.</div>
+            <div class="task-owner"><span class="badge badge-human"><span class="dot"></span>Human</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>App description + keywords (100 chars max)</strong> — write keyword-optimized description for ASO. Agent-owned using ASO research tool + competitor keyword analysis.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done</div>
+        <ul class="dod-list">
+          <li>App submitted to Apple review (status: "Waiting for Review")</li>
+          <li>All required screenshots uploaded for 6.9" iPhone</li>
+          <li>Privacy nutrition label completed</li>
+          <li>IAP products in "Ready to Submit" status</li>
+          <li>Demo account confirmed working</li>
+          <li>App approved and status = "Ready for Sale"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P7 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P7</div>
+        <div class="phase-title-block">
+          <div class="phase-title">Launch + ASO</div>
+          <div class="phase-desc">Going live is the beginning. Visibility in App Store search drives organic installs — free distribution that compounds.</div>
+          <div class="phase-tags">
+            <span class="badge badge-agent"><span class="dot"></span>Agent-Owned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="task-group">
+        <div class="task-group-label">Day 1 Launch Actions</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>ASO keyword research</strong> — use AppFollow or AppTweak free tier to find high-volume, low-competition keywords. Embed top 5–7 in app name + subtitle + keyword field.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Submit to Product Hunt</strong> — schedule for a Tuesday/Wednesday. Add a Maker comment explaining the AI stack. Agent drafts the product description, human approves and posts.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Post in relevant communities</strong> — r/pickleball, r/tennis (LocalCheck); r/dating, r/hinge (Hingesight). Authentic post about what you built and why — no spam.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>@XPrompted launch thread</strong> — document the build process, costs, agent stack, and architecture decisions. Practitioner-grade post (TEAIMS series). Drives inbound for both apps.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done</div>
+        <ul class="dod-list">
+          <li>App live in App Store — public URL accessible</li>
+          <li>ASO keyword field optimized (100 chars)</li>
+          <li>At least 1 external community launch post published</li>
+          <li>App analytics (RevenueCat + Expo Insights) confirming data flows</li>
+          <li>First organic install from App Store search</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P8 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-left">
+        <div class="phase-num">P8</div>
+        <div class="phase-title-block">
+          <div class="phase-title">Growth + Monetization Loop</div>
+          <div class="phase-desc">Week 2 and beyond. Agent-owned analytics loop driving weekly iteration on conversion, retention, and revenue.</div>
+          <div class="phase-tags">
+            <span class="badge badge-agent"><span class="dot"></span>Agent-Owned</span>
+            <span class="badge badge-revenue"><span class="dot"></span>Revenue</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="task-group">
+        <div class="task-group-label">Ongoing Agent-Owned Tasks</div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>Weekly RevenueCat dashboard review</strong> — MRR, trial conversion rate, churn rate, ARPU. Flag any metric off by 20%+ and surface to AJ.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>App Store review monitoring</strong> — parse new reviews weekly, extract feature requests and bugs, create GitHub issues. 1-star reviews get priority response within 24h.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>A/B test paywall copy</strong> — RevenueCat Experiments supports paywall A/B tests. Run 2-week tests on CTA copy, price points, and free trial length. Agent drafts variants, human approves.</div>
+            <div class="task-owner"><span class="badge badge-shared"><span class="dot"></span>Shared</span></div>
+          </div>
+          <div class="task">
+            <div class="task-check"></div>
+            <div class="task-text"><strong>App Store metadata iteration</strong> — update screenshots and description every 4–6 weeks based on conversion data. ASO is not set-and-forget.</div>
+            <div class="task-owner"><span class="badge badge-agent"><span class="dot"></span>Agent</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dod-block">
+        <div class="dod-title">Definition of Done (Ongoing)</div>
+        <ul class="dod-list">
+          <li>Trial-to-paid conversion rate tracked weekly (target: 15%+)</li>
+          <li>Month 1 MRR target: $500+ (validates RevenueCat free tier)</li>
+          <li>Month 3 MRR target: $2,500 (RevenueCat upgrade threshold)</li>
+          <li>Churn rate below 8%/month</li>
+          <li>At least one A/B test completed by end of Month 2</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- REVENUE MODEL -->
+<div class="revenue-section">
+  <div class="section-header">
+    <div class="section-kicker">Revenue Architecture</div>
+    <div class="section-title">Pricing Tiers — Locked at P3</div>
+  </div>
+  <div class="rev-grid">
+    <div class="rev-card">
+      <div class="rev-app">LocalCheck</div>
+      <div class="rev-name">Free</div>
+      <div class="rev-price">$0</div>
+      <ul class="rev-features">
+        <li>Check-in at any court</li>
+        <li>Basic ELO rating</li>
+        <li>Live court availability</li>
+        <li>Match history (last 10)</li>
+      </ul>
+    </div>
+    <div class="rev-card recommended">
+      <div class="rev-app">LocalCheck</div>
+      <div class="rev-name">Pro</div>
+      <div class="rev-price">$2.99<span>/mo</span></div>
+      <ul class="rev-features">
+        <li>Full ELO history + chart</li>
+        <li>Private game runs</li>
+        <li>Advanced player stats</li>
+        <li>Push notifications</li>
+        <li>Annual: $24.99 (30% savings)</li>
+      </ul>
+    </div>
+    <div class="rev-card">
+      <div class="rev-app">Hingesight</div>
+      <div class="rev-name">Free</div>
+      <div class="rev-price">$0</div>
+      <ul class="rev-features">
+        <li>Core dating data analytics</li>
+        <li>Basic match stats</li>
+        <li>7-day history</li>
+      </ul>
+    </div>
+    <div class="rev-card recommended">
+      <div class="rev-app">Hingesight</div>
+      <div class="rev-name">Premium</div>
+      <div class="rev-price">$9.99<span>/mo</span></div>
+      <ul class="rev-features">
+        <li>Full analytics dashboard</li>
+        <li>Conversation pattern analysis</li>
+        <li>Match quality scoring</li>
+        <li>Unlimited history</li>
+        <li>Export data</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warn-block" style="margin-top:20px;">
+    <p><strong>Critical:</strong> Stripe CANNOT be used for in-app digital purchases on iOS. Apple Guideline 3.1.1 requires StoreKit for all in-app digital goods. Hingesight's existing Stripe integration stays for the web version — iOS uses RevenueCat + StoreKit 2 exclusively.</p>
+  </div>
+</div>
+
+<!-- AGENT MANIFEST -->
+<div class="agents-section">
+  <div class="section-header">
+    <div class="section-kicker">Agent Task Manifest</div>
+    <div class="section-title">Who Owns What</div>
+  </div>
+  <div class="agent-grid">
+    <div class="agent-card">
+      <div class="agent-name">Scout</div>
+      <div class="agent-role">Repo Intelligence</div>
+      <div class="agent-tasks">Diff DatingData repos, audit stale branches, generate consolidation PR, monitor for diverged commits.</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name">Forge</div>
+      <div class="agent-role">Build Engineer</div>
+      <div class="agent-tasks">Write eas.json, create GitHub Actions workflow, implement account deletion UI, swap Stripe IAP for RevenueCat SDK calls.</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name">Sentinel</div>
+      <div class="agent-role">Plan + Verify</div>
+      <div class="agent-tasks">Own this document. Flag blockers. Verify DOD at each phase gate. No phase transitions without DOD confirmed.</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name">Herald</div>
+      <div class="agent-role">Comms + ASO</div>
+      <div class="agent-tasks">Draft App Store metadata, write @XPrompted launch thread, monitor reviews, draft Product Hunt page.</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name">Chief of Staff</div>
+      <div class="agent-role">Orchestrator</div>
+      <div class="agent-tasks">Coordinate agent delegation, surface human gates to AJ via Slack/Telegram, maintain this plan, verify completeness before reporting done.</div>
+    </div>
+  </div>
+</div>
+
+<footer style="max-width:1200px;">
+  <p>jGPT-Automated/GenJess_OS · iOS Launch Plan v1.0 · Generated 2026-05-26</p>
+  <p>Sentinel authored · Chief of Staff deployed · Phase gate: P0 (Human)</p>
+</footer>
+
+</body>
+</html>
